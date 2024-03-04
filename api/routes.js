@@ -19,7 +19,7 @@ const {
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './uploads')
+    cb(null, '../front_bolets/public/img') 
   },
   filename: function (req, file, cb) {
     cb(null, `${Date.now()}_${file.originalname}`)
@@ -226,9 +226,9 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Incorrect password' });
     }
     // Generate JWT token
-    const token = jwt.sign({ userId: user.id, userName: user.name }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user.id, userName: user.name }, SECRET_KEY, { expiresIn: '2h' });
     // Set the token in a cookie
-    res.cookie('token', token, { httpOnly: true, maxAge: 3600000 }); // Max age: 1 hour
+    res.cookie('token', token, { httpOnly: false, maxAge: 7200000 }); // Max age: 2 hour
     res.json({ message: 'Logged in successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
