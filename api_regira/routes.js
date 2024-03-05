@@ -6,13 +6,8 @@ const jwt = require('jsonwebtoken'); // Importa la llibreria jsonwebtoken per a 
 
 const SECRET_KEY = "en-pinxo-li-va-dir-a-en-panxo"; // Clau secreta per a la generació de JWT
 
-const { Project,
-  Issue,
-  User,
-  Comment,
-  Tag } = require('./models'); // Importa els models de dades
+const { Bolet, Tag, User } = require('./models'); // Importa els models de dades
 
-  /*
 const {
   createItem,
   updateItem,
@@ -67,7 +62,7 @@ const checkToken = (req, res, next) => {
 
 
 // Operacions CRUD per als Bolets
-router.get('/bolets', checkToken, async (req, res) => await readItems(req, res, Bolet)); // Llegeix tots els bolets
+router.get('/bolets', async (req, res) => await readItems(req, res, Bolet)); // Llegeix tots els bolets
 router.get('/bolets/:id', async (req, res) => await readItem(req, res, Bolet)); // Llegeix un bolet específic
 router.put('/bolets/:id', async (req, res) => await updateItem(req, res, Bolet)); // Actualitza un bolet
 router.delete('/bolets/:id', async (req, res) => await deleteItem(req, res, Bolet)); // Elimina un bolet
@@ -89,7 +84,7 @@ router.delete('/users/:id', async (req, res) => await deleteItem(req, res, User)
 
 
 // Endpoint per crear un bolet (amb foto) (afegit checkToken)
-router.post('/bolets', checkToken, async (req, res, next) => {
+router.post('/bolets', async (req, res, next) => {
   try {
     const user = await User.findByPk(req.userId); // Cerca l'usuari pel seu ID
     if (!user) {
@@ -207,6 +202,6 @@ router.post('/register', async (req, res) => {
 });
 
 
-*/
+
 
 module.exports = router; // Exporta el router amb les rutes definides

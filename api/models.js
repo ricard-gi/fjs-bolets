@@ -5,7 +5,8 @@ const bcrypt = require('bcrypt'); // Importa la llibreria bcrypt per a encriptar
 
 const sequelize = new Sequelize('bolets', 'root', 'admin', {
   //host: 'localhost',
-  host: '192.168.5.248', //IP de la base de dades
+  host: '192.168.1.158', //IP de la base de dades
+  port: 3306,
   dialect: 'mysql' // connectem a mysql
 });
 
@@ -71,6 +72,16 @@ Tag.belongsToMany(Bolet, { through: 'bolet_tag' }); // Relació de molts a molts
 
 User.hasMany(Bolet); // Un usuari pot tenir molts bolets
 Bolet.belongsTo(User); // Un bolet pertany a un únic usuari
+
+
+// connectem a base de dades i creem un primer usuari
+async function iniDB() {
+  await sequelize.sync({ force: true });
+}
+
+
+//iniDB();
+
 
 // Exporta els models per a poder ser utilitzats en altres parts de l'aplicació
 module.exports = {
