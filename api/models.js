@@ -2,7 +2,9 @@
 const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
 const sequelize = new Sequelize('bolets', 'root', 'admin', {
-  host: 'localhost',
+  //host: 'localhost',
+  host: '192.168.5.248', //localhost
+
   dialect: 'mysql' // or any other dialect
 });
 

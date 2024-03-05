@@ -8,15 +8,30 @@ const API_URL = 'http://localhost:3000/api';
 export default () => {
 
     const [bolets, setBolets] = useState([])
+    const [error, setError] = useState(false)
+
+    const opcions = {
+        credentials: 'include',
+    }
 
     useEffect(() => {
 
-        fetch(API_URL + '/bolets')
+        fetch(API_URL + '/bolets', opcions)
             .then(resp => resp.json())
-            .then(data => setBolets(data))
+            .then(data => {
+                if (data.error){
+                    setError(true)
+                } else {
+                    setBolets(data);
+                }
+            })
 
     }, [])
 
+
+    if (error){
+        return <h1 className='text-red-500'>No autoritzat!</h1>
+    }
 
     return (<>
         <h1>Llista de bolets</h1>

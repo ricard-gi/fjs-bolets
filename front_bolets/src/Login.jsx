@@ -18,7 +18,7 @@ export default () => {
 
         e.preventDefault();
 
-        console.log("loguejatn..", email, password)
+        console.log("loguejant..", email, password)
 
         const credencials = {
             email,
@@ -27,6 +27,7 @@ export default () => {
 
         const opcions = {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
               },

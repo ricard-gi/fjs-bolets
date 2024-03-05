@@ -29,9 +29,27 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single('foto');
 
 
+// Middleware to check JWT token in cookie
+const checkToken = (req, res, next) => {
+  console.log("checking")
+  const token = req.cookies?.token;
+  if (!token) {
+    console.log(req.cookies)
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, SECRET_KEY);
+    req.userId = decodedToken.userId; // Set userId in the request object
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
 // CRUD operations for Bolet
 //router.post('/bolets', async (req, res) => await createItem(req, res, Bolet));
-router.get('/bolets', async (req, res) => await readItems(req, res, Bolet));
+router.get('/bolets', checkToken, async (req, res) => await readItems(req, res, Bolet));
 router.get('/bolets/:id', async (req, res) => await readItem(req, res, Bolet));
 router.put('/bolets/:id', async (req, res) => await updateItem(req, res, Bolet));
 router.delete('/bolets/:id', async (req, res) => await deleteItem(req, res, Bolet));
@@ -102,23 +120,7 @@ router.post('/bolets/users/:userId', async (req, res, next) => {
 */
 
 
-// Middleware to check JWT token in cookie
-const checkToken = (req, res, next) => {
-  console.log("checking")
-  const token = req.cookies?.token;
-  if (!token) {
-    console.log(req.cookies)
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
 
-  try {
-    const decodedToken = jwt.verify(token, SECRET_KEY);
-    req.userId = decodedToken.userId; // Set userId in the request object
-    next();
-  } catch (error) {
-    return res.status(401).json({ error: 'Invalid token' });
-  }
-};
 
 // Use the middleware in the route
 router.post('/bolets', checkToken, async (req, res, next) => {
@@ -227,6 +229,7 @@ router.post('/login', async (req, res) => {
     }
     // Generate JWT token
     const token = jwt.sign({ userId: user.id, userName: user.name }, SECRET_KEY, { expiresIn: '2h' });
+    console.log("fetn cookie")
     // Set the token in a cookie
     res.cookie('token', token, { httpOnly: false, maxAge: 7200000 }); // Max age: 2 hour
     res.json({ message: 'Logged in successfully' });
