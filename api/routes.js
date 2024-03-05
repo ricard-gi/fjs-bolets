@@ -1,266 +1,207 @@
-const express = require('express');
-const router = express.Router();
-const multer = require('multer');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const express = require('express'); // Importa la llibreria Express per gestionar les rutes
+const router = express.Router(); // Crea un router d'Express
+const multer = require('multer'); // Importa la llibreria multer per gestionar peticions de fitxers
+const bcrypt = require('bcrypt'); // Importa la llibreria bcrypt per a encriptar contrasenyes
+const jwt = require('jsonwebtoken'); // Importa la llibreria jsonwebtoken per a generar i verificar JWT
 
-const SECRET_KEY = "en-pinxo-li-va-dir-a-en-panxo";
+const SECRET_KEY = "en-pinxo-li-va-dir-a-en-panxo"; // Clau secreta per a la generació de JWT
 
-const { Bolet, Tag, User } = require('./models');
+const { Bolet, Tag, User } = require('./models'); // Importa els models de dades
+
 const {
   createItem,
   updateItem,
   deleteItem,
   readItem,
   readItems
-} = require('./generics');
+} = require('./generics'); // Importa les funcions per a realitzar operacions CRUD genèriques
 
-
-
+// Configuració de multer per gestionar la pujada de fitxers
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, '../front_bolets/public/img') 
+    cb(null, '../front_bolets/public/img') // Especifica la carpeta de destinació dels fitxers pujats
   },
   filename: function (req, file, cb) {
-    cb(null, `${Date.now()}_${file.originalname}`)
+    cb(null, `${Date.now()}_${file.originalname}`) // Assigna un nom únic als fitxers pujats
   }
 })
 
-const upload = multer({ storage: storage }).single('foto');
+const upload = multer({ storage: storage }).single('foto'); // Configura multer per a gestionar la pujada d'un únic fitxer amb el camp 'foto'
 
 
-// Middleware to check JWT token in cookie
+// AUTENTICACIO
+// AUTENTICACIO
+// AUTENTICACIO
+// AUTENTICACIO
+
+// Middleware per verificar el JWT en la cookie
 const checkToken = (req, res, next) => {
-  console.log("checking")
-  const token = req.cookies?.token;
+  const token = req.cookies?.token; // Obté el token des de la cookie de la petició
   if (!token) {
-    console.log(req.cookies)
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: 'Unauthorized' }); // Retorna error 401 si no hi ha cap token
   }
 
   try {
-    const decodedToken = jwt.verify(token, SECRET_KEY);
-    req.userId = decodedToken.userId; // Set userId in the request object
-    next();
+    const decodedToken = jwt.verify(token, SECRET_KEY); // Verifica el token utilitzant la clau secreta
+    req.userId = decodedToken.userId; // Estableix l'ID d'usuari a l'objecte de la petició
+    next(); // Passa al següent middleware
   } catch (error) {
-    return res.status(401).json({ error: 'Invalid token' });
+    return res.status(401).json({ error: 'Invalid token' }); // Retorna error 401 si el token és invàlid
   }
 };
 
-// CRUD operations for Bolet
-//router.post('/bolets', async (req, res) => await createItem(req, res, Bolet));
-router.get('/bolets', checkToken, async (req, res) => await readItems(req, res, Bolet));
-router.get('/bolets/:id', async (req, res) => await readItem(req, res, Bolet));
-router.put('/bolets/:id', async (req, res) => await updateItem(req, res, Bolet));
-router.delete('/bolets/:id', async (req, res) => await deleteItem(req, res, Bolet));
-
-
-// CRUD operations for Tag
-router.post('/tags', async (req, res) => await createItem(req, res, Tag));
-router.get('/tags', async (req, res) => await readItems(req, res, Tag));
-router.get('/tags/:id', async (req, res) => await readItem(req, res, Tag));
-router.put('/tags/:id', async (req, res) => await updateItem(req, res, Tag));
-router.delete('/tags/:id', async (req, res) => await deleteItem(req, res, Tag));
-
-// CRUD operations for User
-//router.post('/users', async (req, res) => await createItem(req, res, User)); // replaced by register
-router.get('/users', async (req, res) => await readItems(req, res, User));
-router.get('/users/:id', async (req, res) => await readItem(req, res, User));
-router.put('/users/:id', async (req, res) => await updateItem(req, res, User));
-router.delete('/users/:id', async (req, res) => await deleteItem(req, res, User));
-
-
-// post bolet, incloent foto
-/*
-router.post('/bolets', (req, res, next) => {
-  upload(req, res, async function (err) {
-    if (err) {
-      return res.status(500).json({ error: err.message })
-    }
-    if (req.file) {
-      req.body.foto = req.file.filename
-    }
-    try {
-      const item = await Bolet.create(req.body);
-      res.status(201).json(item);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  })
-});
-*/
-
-// post bolet per a user, incloent foto
-/*
-router.post('/bolets/users/:userId', async (req, res, next) => {
-  try {
-    const user = await User.findByPk(req.params.userId);
-    if (!user) {
-       return res.status(500).json({ error: err.message })
-    }
-    req.body.userId = req.params.userId;
-
-    upload(req, res, async function (err) {
-      if (err) {
-        return res.status(500).json({ error: err.message })
-      }
-      if (req.file) {
-        req.body.foto = req.file.filename
-      }
-
-      const item = await Bolet.create(req.body);
-      res.status(201).json(item);
-    })
-
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-
-});
-*/
 
 
 
+// CRUD
+// CRUD
+// CRUD
+// CRUD
+// CRUD
+// CRUD
 
-// Use the middleware in the route
+
+// Operacions CRUD per als Bolets
+router.get('/bolets', checkToken, async (req, res) => await readItems(req, res, Bolet)); // Llegeix tots els bolets
+router.get('/bolets/:id', async (req, res) => await readItem(req, res, Bolet)); // Llegeix un bolet específic
+router.put('/bolets/:id', async (req, res) => await updateItem(req, res, Bolet)); // Actualitza un bolet
+router.delete('/bolets/:id', async (req, res) => await deleteItem(req, res, Bolet)); // Elimina un bolet
+
+
+// Operacions CRUD per a les Etiquetes
+router.post('/tags', async (req, res) => await createItem(req, res, Tag)); // Crea una etiqueta
+router.get('/tags', async (req, res) => await readItems(req, res, Tag)); // Llegeix totes les etiquetes
+router.get('/tags/:id', async (req, res) => await readItem(req, res, Tag)); // Llegeix una etiqueta específica
+router.put('/tags/:id', async (req, res) => await updateItem(req, res, Tag)); // Actualitza una etiqueta
+router.delete('/tags/:id', async (req, res) => await deleteItem(req, res, Tag)); // Elimina una etiqueta
+
+
+// Operacions CRUD per als Usuaris
+router.get('/users', async (req, res) => await readItems(req, res, User)); // Llegeix tots els usuaris
+router.get('/users/:id', async (req, res) => await readItem(req, res, User)); // Llegeix un usuari específic
+router.put('/users/:id', async (req, res) => await updateItem(req, res, User)); // Actualitza un usuari
+router.delete('/users/:id', async (req, res) => await deleteItem(req, res, User)); // Elimina un usuari
+
+
+// Endpoint per crear un bolet (amb foto)
 router.post('/bolets', checkToken, async (req, res, next) => {
   try {
-    // Find the user by userId
-    const user = await User.findByPk(req.userId);
+    const user = await User.findByPk(req.userId); // Cerca l'usuari pel seu ID
     if (!user) {
-      return res.status(500).json({ error: 'User not found' });
+      return res.status(500).json({ error: 'User no trobat' }); // Retorna error 500 si no es troba l'usuari
     }
 
-    // Set userId in the request body
-    req.body.userId = req.userId;
+    req.body.userId = req.userId; // Estableix l'ID de l'usuari en el cos de la petició
 
-    upload(req, res, async function (err) {
+    upload(req, res, async function (err) { // Gestiona la pujada del fitxer
       if (err) {
-        return res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message }); // Retorna error 500 si hi ha algun error en la pujada del fitxer
       }
       if (req.file) {
-        req.body.foto = req.file.filename;
+        req.body.foto = req.file.filename; // Assigna el nom del fitxer pujat al camp 'foto'
       }
 
-      const item = await Bolet.create(req.body);
-      res.status(201).json(item);
+      const item = await Bolet.create(req.body); // Crea un nou bolet amb les dades rebudes
+      res.status(201).json(item); // Retorna l'objecte del bolet creat amb el codi d'estat 201 (Creat)
     });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message }); // Retorna error 500 amb el missatge d'error
   }
 });
 
 
-
-// Endpoint to link a tag to a bolet
+// Endpoint per vincular una etiqueta a un bolet
 router.post('/bolets/:boletId/tags/:tagId', async (req, res) => {
   try {
-    const bolet = await Bolet.findByPk(req.params.boletId);
-    const tag = await Tag.findByPk(req.params.tagId);
+    const bolet = await Bolet.findByPk(req.params.boletId); // Cerca el bolet pel seu ID
+    const tag = await Tag.findByPk(req.params.tagId); // Cerca l'etiqueta pel seu ID
     if (!bolet || !tag) {
-      return res.status(404).json({ error: 'Bolet or Tag not found' });
+      return res.status(404).json({ error: 'Bolet o Tag no trobats' }); // Retorna error 404 si el bolet o l'etiqueta no es troben
     }
-    await bolet.addTag(tag);
-    res.json({ message: 'Tag linked to bolet successfully' });
+    await bolet.addTag(tag); // Afegeix l'etiqueta al bolet
+    res.json({ message: 'Tag linkat' }); // Retorna missatge d'èxit
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message }); // Retorna error 500 amb el missatge d'error
   }
 });
 
-// Endpoint to create a bolet linked to an author
-router.post('/bolets/users/:userId', async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    const bolet = await Bolet.create({ ...req.body, userId: req.params.userId });
-    res.status(201).json(bolet);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
-// Endpoint to get all tags for an bolet
+// Endpoint per obtenir totes les etiquetes per a un bolet
 router.get('/bolets/:boletId/tags', async (req, res) => {
   try {
-    const bolet = await Bolet.findByPk(req.params.boletId);
+    const bolet = await Bolet.findByPk(req.params.boletId); // Cerca el bolet pel seu ID
     if (!bolet) {
-      return res.status(404).json({ error: 'Bolet not found' });
+      return res.status(404).json({ error: 'Bolet no trobat' }); // Retorna error 404 si el bolet no es troba
     }
-    const tags = await bolet.getTags();
-    res.json(tags);
+    const tags = await bolet.getTags(); // Obté totes les etiquetes associades al bolet
+    res.json(tags); // Retorna les etiquetes
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message }); // Retorna error 500 amb el missatge d'error
   }
 });
 
-
-
-// Endpoint to get the bolets for a tag
+// Endpoint per obtenir els bolets per a una etiqueta
 router.get('/tags/:tagtId/bolets', async (req, res) => {
   try {
-    const tag = await Tag.findByPk(req.params.tagId, { include: Bolet });
+    const tag = await Tag.findByPk(req.params.tagId, { include: Bolet }); // Cerca l'etiqueta pel seu ID, incloent els bolets associats
     if (!tag) {
-      return res.status(404).json({ error: 'Tag not found' });
+      return res.status(404).json({ error: 'Tag no trobat' }); // Retorna error 404 si l'etiqueta no es troba
     }
-    res.json(tag.bolets);
+    res.json(tag.bolets); // Retorna els bolets associats a l'etiqueta
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message }); // Retorna error 500 amb el missatge d'error
   }
 });
 
 
 
-// Endpoint to log in a user
+// LOGIN I REGISTRE
+// LOGIN I REGISTRE
+// LOGIN I REGISTRE
+// LOGIN I REGISTRE
+
+
+
+// Endpoint per iniciar sessió d'un usuari
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body; // Obté l'email i la contrasenya de la petició
   try {
-    // Find the user by email
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email } }); // Cerca l'usuari pel seu email
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'User no trobat' }); // Retorna error 404 si l'usuari no es troba
     }
-    // Compare the provided password with the hashed password
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = await bcrypt.compare(password, user.password); // Compara la contrasenya proporcionada amb la contrasenya encriptada de l'usuari
     if (!passwordMatch) {
-      return res.status(401).json({ error: 'Incorrect password' });
+      return res.status(401).json({ error: 'Password incorrecte' }); // Retorna error 401 si la contrasenya és incorrecta
     }
-    // Generate JWT token
-    const token = jwt.sign({ userId: user.id, userName: user.name }, SECRET_KEY, { expiresIn: '2h' });
-    console.log("fetn cookie")
-    // Set the token in a cookie
-    res.cookie('token', token, { httpOnly: false, maxAge: 7200000 }); // Max age: 2 hour
-    res.json({ message: 'Logged in successfully' });
+    const token = jwt.sign({ userId: user.id, userName: user.name }, SECRET_KEY, { expiresIn: '2h' }); // Genera un token JWT vàlid durant 2 hores
+    res.cookie('token', token, { httpOnly: false, maxAge: 7200000 }); // Estableix el token com una cookie
+    res.json({ message: 'Login correcte' }); // Retorna missatge d'èxit
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message }); // Retorna error 500 amb el missatge d'error
   }
 });
 
-
-// Endpoint to create a user
+// Endpoint per registrar un usuari
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    // Check if name, email, and password are provided
+    const { name, email, password } = req.body; // Obté el nom, email i contrasenya de la petició
     if (!name || !email || !password) {
-      return res.status(400).json({ error: 'Name, email, and password are required' });
+      return res.status(400).json({ error: 'Name, email, i password requerits' }); // Retorna error 400 si no es proporcionen el nom, email o contrasenya
     }
-    // Check if the email is already registered
-    const existingUser = await User.findOne({ where: { email } });
+    const existingUser = await User.findOne({ where: { email } }); // Comprova si l'email ja està registrat
     if (existingUser) {
-      return res.status(400).json({ error: 'Email is already registered' });
+      return res.status(400).json({ error: 'Email ja existeix' }); // Retorna error 400 si l'email ja està registrat
     }
-    // Create the user
-    const user = await User.create({ name, email, password });
-    res.status(201).json(user);
+    const user = await User.create({ name, email, password }); // Crea l'usuari amb les dades proporcionades
+    res.status(201).json(user); // Retorna l'usuari creat amb el codi d'estat 201 (Creat)
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message }); // Retorna error 500 amb el missatge d'error
   }
 });
 
 
 
 
-module.exports = router;
+module.exports = router; // Exporta el router amb les rutes definides

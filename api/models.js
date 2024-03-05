@@ -1,85 +1,78 @@
-// Define the sequelize setup
-const Sequelize = require('sequelize');
-const bcrypt = require('bcrypt');
+// Es defineix la configuració de sequelize
+const Sequelize = require('sequelize'); // Importa la llibreria Sequelize
+
+const bcrypt = require('bcrypt'); // Importa la llibreria bcrypt per a encriptar contrasenyes
+
 const sequelize = new Sequelize('bolets', 'root', 'admin', {
   //host: 'localhost',
-  host: '192.168.5.248', //localhost
-
-  dialect: 'mysql' // or any other dialect
+  host: '192.168.5.248', //IP de la base de dades
+  dialect: 'mysql' // connectem a mysql
 });
 
 
-// Define the Issue model
+// Es defineix el model de Bolet
 const Bolet = sequelize.define('bolet', {
   nom: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false // No es permet valor nul per al nom
   },
   desc: {
     type: Sequelize.STRING,
-    allowNull: true
+    allowNull: true // Es permet valor nul per a la descripció
   },
   tipus: {
-    type: Sequelize.ENUM('Comestible', 'No comestible', 'Perillós'),
-    allowNull: false
+    type: Sequelize.ENUM('Comestible', 'No comestible', 'Perillós'), // Només es permeten aquests valors
+    allowNull: false // No es permet valor nul per al tipus
   },
   foto: {
     type: Sequelize.STRING,
-    allowNull: true
+    allowNull: true // Es permet valor nul per a la foto
   },
 });
 
-// Define the Tag model
+// Es defineix el model de Tag
 const Tag = sequelize.define('tag', {
   name: {
     type: Sequelize.STRING,
-    unique: true,
-    allowNull: false
+    unique: true, // El nom del tag ha de ser únic
+    allowNull: false // No es permet valor nul per al nom
   }
 });
 
-// Define the User model
+// Es defineix el model d'usuari
 const User = sequelize.define('user', {
   name: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false // No es permet valor nul per al nom
   },
   email: {
     type: Sequelize.STRING,
-    allowNull: false,
-    unique: true
+    allowNull: false, // No es permet valor nul per a l'email
+    unique: true // L'email ha de ser únic
   },
   password: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false // No es permet valor nul per a la contrasenya
   }
 });
 
-// Hook to hash the password before saving a new user
+
+// hook per encriptar la contrasenya abans de desar un nou usuari
 User.beforeCreate(async (user) => {
-  const hashedPassword = await bcrypt.hash(user.password, 10);
+  const hashedPassword = await bcrypt.hash(user.password, 10); // Encripta la contrasenya amb bcrypt
   user.password = hashedPassword;
 });
 
 
+// Establint relacions entre models
 
+Bolet.belongsToMany(Tag, { through: 'bolet_tag' }); // Relació de molts a molts entre Bolet i Tag
+Tag.belongsToMany(Bolet, { through: 'bolet_tag' }); // Relació de molts a molts entre Tag i Bolet
 
-Bolet.belongsToMany(Tag, { through: 'bolet_tag' }); // Many-to-many relationship between Bolet and Tag
-Tag.belongsToMany(Bolet, { through: 'bolet_tag' }); // Many-to-many relationship between Tag and Bolet
+User.hasMany(Bolet); // Un usuari pot tenir molts bolets
+Bolet.belongsTo(User); // Un bolet pertany a un únic usuari
 
-User.hasMany(Bolet); // One user can have multiple bolets
-Bolet.belongsTo(User); // A bolet belongs to one user
-
-
-// Sync models with the database
-/*
-sequelize.sync({ force: true }) // This will drop the tables if they already exist
-  .then(() => {
-    console.log('Database & tables created!');
-  });
-*/
-
-// Export models
+// Exporta els models per a poder ser utilitzats en altres parts de l'aplicació
 module.exports = {
   Bolet,
   Tag,

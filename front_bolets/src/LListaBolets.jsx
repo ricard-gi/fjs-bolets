@@ -19,7 +19,7 @@ export default () => {
         fetch(API_URL + '/bolets', opcions)
             .then(resp => resp.json())
             .then(data => {
-                if (data.error){
+                if (data.error) {
                     setError(true)
                 } else {
                     setBolets(data);
@@ -29,7 +29,7 @@ export default () => {
     }, [])
 
 
-    if (error){
+    if (error) {
         return <h1 className='text-red-500'>No autoritzat!</h1>
     }
 
@@ -54,7 +54,7 @@ export default () => {
                             </thead>
                             <tbody>
 
-                                {bolets.map(bolet => 
+                                {bolets.map(bolet =>
                                 (<tr key={bolet.id} className="border-b border-neutral-200 dark:border-white/10">
                                     <td className="whitespace-nowrap px-6 py-4 font-medium">{bolet.id}</td>
                                     <td className="whitespace-nowrap px-6 py-4">{bolet.nom}</td>
@@ -62,7 +62,7 @@ export default () => {
                                     <td className="whitespace-nowrap px-6 py-4"><img width="150px" src={`/img/${bolet.foto}`} alt={bolet.nom} /></td>
                                 </tr>)
                                 )}
-                               
+
                             </tbody>
                         </table>
                     </div>
