@@ -95,8 +95,14 @@ Issue.belongsTo(Project); // Un issue pertany a un únic projecte
 User.hasMany(Project);
 Project.belongsTo(User);
 
-Issue.belongsTo(User, { as: 'author' }); // Un issue té un autor (usuari que l'ha creat)
-Issue.belongsTo(User, { as: 'assignee' }); // Un issue té un usuari assignat
+
+
+Issue.belongsTo(User, { foreignKey: 'authorId' }); // Un issue té un autor (usuari que l'ha creat)
+User.hasMany(Issue, { foreignKey: 'authorId' }); 
+
+Issue.belongsTo(User, { foreignKey: 'assigneeId' }); // Un issue té un usuari assignat
+User.hasMany(Issue, { foreignKey: 'assigneeId' }); 
+
 
 Issue.hasMany(Comment); // Un issue pot tenir diversos comentaris
 Comment.belongsTo(Issue); // Un comentari pertany a un únic issue

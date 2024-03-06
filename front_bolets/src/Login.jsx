@@ -9,7 +9,7 @@ const API_URL = 'http://localhost:3000/api';
 
 export default () => {
 
-    const [email, setEmail] = useState('joanot@gmail.com');
+    const [email, setEmail] = useState('marta@gmail.com');
     const [password, setPassword] = useState('');
     const redirect = useNavigate();
 

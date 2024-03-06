@@ -20,28 +20,27 @@ export default () => {
 
         e.preventDefault();
 
-            const data = new FormData()
-            data.append('foto', imatge);
-            data.append("nom", nom);
-            data.append("desc", '');
-            data.append("tipus", tipus);
+        const data = new FormData()
+        data.append('foto', imatge);
+        data.append("nom", nom);
+        data.append("desc", '');
+        data.append("tipus", tipus);
 
-            const options = {
-              method: "POST",
-           
-              body: data,
-              credentials: 'include',
-            }
-        
-            fetch(API_URL+'/bolets', options)
-              .then(res => res.json())
-              .then(data => {
+        const options = {
+            method: "POST",
+            body: data,
+            credentials: 'include',
+        }
+
+        fetch(API_URL + '/bolets', options)
+            .then(res => res.json())
+            .then(data => {
                 console.log("resp", data);
                 redirect('/')
-              })
-              .catch(cosa => console.log(cosa))
-        
-          }
+            })
+            .catch(cosa => console.log(cosa))
+
+    }
 
     return (
 
@@ -65,8 +64,8 @@ export default () => {
                             onChange={() => setTipus("Comestible")} />
                         Comestible
                     </label>
-                    </div>
-                    <div className="radio">
+                </div>
+                <div className="radio">
 
                     <label>
                         <input type="radio" value="No Comestible" name="tipus"
@@ -74,8 +73,8 @@ export default () => {
                             onChange={() => setTipus("No Comestible")} />
                         No Comestible
                     </label>
-                    </div>
-                    <div className="radio">
+                </div>
+                <div className="radio">
 
                     <label>
                         <input type="radio" value="Perillós" name="tipus"
@@ -87,7 +86,7 @@ export default () => {
 
                 </div>
                 <label for="formfile" className="form-label">File</label>
-      <input className="form-control " id="formfile" type="file" name="file" onChange={(e)=>setImatge(e.target.files[0])} />
+                <input className="form-control " id="formfile" type="file" name="file" onChange={(e) => setImatge(e.target.files[0])} />
 
                 <div >
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">

@@ -6,19 +6,17 @@ const jwt = require('jsonwebtoken'); // Importa la llibreria jsonwebtoken per a 
 
 const SECRET_KEY = "en-pinxo-li-va-dir-a-en-panxo"; // Clau secreta per a la generació de JWT
 
-const { Project,
-  Issue,
-  User,
-  Comment,
-  Tag } = require('./models'); // Importa els models de dades
+const { Bolet, Tag, User } = require('./models'); // Importa els models de dades
 
-  /*
 const {
   createItem,
   updateItem,
   deleteItem,
   readItem,
-  readItems
+  readItems,
+  readItemForUser,
+  readItemsForUser,
+  deleteItemForUser
 } = require('./generics'); // Importa les funcions per a realitzar operacions CRUD genèriques
 
 // Configuració de multer per gestionar la pujada de fitxers
@@ -67,10 +65,23 @@ const checkToken = (req, res, next) => {
 
 
 // Operacions CRUD per als Bolets
-router.get('/bolets', checkToken, async (req, res) => await readItems(req, res, Bolet)); // Llegeix tots els bolets
-router.get('/bolets/:id', async (req, res) => await readItem(req, res, Bolet)); // Llegeix un bolet específic
+
+router.get('/bolets', checkToken, async (req, res) => await readItemsForUser(req, res, Bolet)); // Llegeix un bolet específic
+router.get('/bolets/:id', checkToken, async (req, res) => await readItemForUser(req, res, Bolet)); // Llegeix un bolet específic
 router.put('/bolets/:id', async (req, res) => await updateItem(req, res, Bolet)); // Actualitza un bolet
 router.delete('/bolets/:id', async (req, res) => await deleteItem(req, res, Bolet)); // Elimina un bolet
+
+//get bolets ALTERNATIU només per a l'usuari loguejat
+router.get('/bolets___', checkToken, async (req, res) =>{
+  try {
+    const user = await User.findByPk(req.userId); // Cerca l'usuari pel seu ID
+    const items = await user.getBolets()
+    //const items = await Bolet.findAll({where: {userId: req.userId}});
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ error: error.message }); // Retorna error 500 amb el missatge d'error
+  }
+}); // Llegeix els bolets d'un usuari
 
 
 // Operacions CRUD per a les Etiquetes
@@ -105,8 +116,9 @@ router.post('/bolets', checkToken, async (req, res, next) => {
       if (req.file) {
         req.body.foto = req.file.filename; // Assigna el nom del fitxer pujat al camp 'foto'
       }
-
-      const item = await Bolet.create(req.body); // Crea un nou bolet amb les dades rebudes
+      // IMPORTANT! user.createBolet() és una "funció"
+      // de sequelize que automàticament vincula el Bolet creat amb l'usuari user
+      const item = await user.createBolet(req.body); // Crea un nou bolet PER A L'USUARI ACTUAL amb les dades rebudes
       res.status(201).json(item); // Retorna l'objecte del bolet creat amb el codi d'estat 201 (Creat)
     });
 
@@ -207,6 +219,6 @@ router.post('/register', async (req, res) => {
 });
 
 
-*/
+
 
 module.exports = router; // Exporta el router amb les rutes definides

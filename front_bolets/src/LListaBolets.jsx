@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 const API_URL = 'http://localhost:3000/api';
@@ -8,7 +9,8 @@ const API_URL = 'http://localhost:3000/api';
 export default () => {
 
     const [bolets, setBolets] = useState([])
-    const [error, setError] = useState(false)
+    const [error, setError] = useState('')
+    const redirect = useNavigate();
 
     const opcions = {
         credentials: 'include',
@@ -20,7 +22,7 @@ export default () => {
             .then(resp => resp.json())
             .then(data => {
                 if (data.error) {
-                    setError(true)
+                    setError(error)
                 } else {
                     setBolets(data);
                 }
@@ -30,7 +32,7 @@ export default () => {
 
 
     if (error) {
-        return <h1 className='text-red-500'>No autoritzat!</h1>
+        return <h1 className='text-red-500'>{error}</h1>
     }
 
     return (<>
@@ -60,6 +62,7 @@ export default () => {
                                     <td className="whitespace-nowrap px-6 py-4">{bolet.nom}</td>
                                     <td className="whitespace-nowrap px-6 py-4">{bolet.tipus}</td>
                                     <td className="whitespace-nowrap px-6 py-4"><img width="150px" src={`/img/${bolet.foto}`} alt={bolet.nom} /></td>
+                                    <td className="whitespace-nowrap px-6 py-4"><button className="border p-2 bg-yellow-300" onClick={()=>redirect("/bolet/"+bolet.id)} >Detall</button></td>
                                 </tr>)
                                 )}
 

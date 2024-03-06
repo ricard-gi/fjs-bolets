@@ -19,7 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route index element={<Inici />} />
           <Route path="/login" element={<Login />} />
           <Route path="/llista" element={<LListaBolets />} />
-          <Route path="/bolet/:nom" element={<MostraBolet />} />
+          <Route path="/bolet/:id" element={<MostraBolet />} />
           <Route path="/bolet/nou" element={<BoletNou />} />
           
         </Route>

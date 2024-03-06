@@ -6,8 +6,13 @@ const jwt = require('jsonwebtoken'); // Importa la llibreria jsonwebtoken per a 
 
 const SECRET_KEY = "en-pinxo-li-va-dir-a-en-panxo"; // Clau secreta per a la generació de JWT
 
-const { Bolet, Tag, User } = require('./models'); // Importa els models de dades
+const { Project,
+  Issue,
+  User,
+  Comment,
+  Tag } = require('./models'); // Importa els models de dades
 
+  /*
 const {
   createItem,
   updateItem,
@@ -21,8 +26,8 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, '../front_bolets/public/img') // Especifica la carpeta de destinació dels fitxers pujats
   },
-  filename: function (req, file, estableixNom) {
-    estableixNom(null, `${Date.now()}_${file.originalname}`) // Assigna un nom únic als fitxers pujats
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}_${file.originalname}`) // Assigna un nom únic als fitxers pujats
   }
 })
 
@@ -101,7 +106,7 @@ router.post('/bolets', checkToken, async (req, res, next) => {
         req.body.foto = req.file.filename; // Assigna el nom del fitxer pujat al camp 'foto'
       }
 
-      const item = await user.createBolet(req.body); // Crea un nou bolet amb les dades rebudes
+      const item = await Bolet.create(req.body); // Crea un nou bolet amb les dades rebudes
       res.status(201).json(item); // Retorna l'objecte del bolet creat amb el codi d'estat 201 (Creat)
     });
 
@@ -202,6 +207,6 @@ router.post('/register', async (req, res) => {
 });
 
 
-
+*/
 
 module.exports = router; // Exporta el router amb les rutes definides

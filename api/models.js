@@ -28,7 +28,7 @@ const Bolet = sequelize.define('bolet', {
   foto: {
     type: Sequelize.STRING,
     allowNull: true // Es permet valor nul per a la foto
-  },
+  }
 });
 
 // Es defineix el model de Tag
